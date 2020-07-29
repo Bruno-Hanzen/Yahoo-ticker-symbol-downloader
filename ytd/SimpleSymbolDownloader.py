@@ -1,5 +1,5 @@
 import requests
-import string
+#import string
 from time import sleep
 import math
 
@@ -24,6 +24,7 @@ class SymbolDownloader:
         self._add_queries()
         self.current_q = self.queries[0]
         self.done = False
+        self.nearly_done = False
 
     def _add_queries(self, prefix=''):
         # This method will add (prefix+)a...z to self.queries
@@ -46,9 +47,10 @@ class SymbolDownloader:
         return encoded
 
     def _fetch(self, insecure):
-        params = {
-            'searchTerm': self.current_q,
-        }
+        #avoid strange Yahoo api behaviour with searchTerm = "null"
+        if self.current_q != "null":
+            params = { 'searchTerm': self.current_q, } 
+        else: params = { 'searchTerm': "nulll", }
         query_string = {
             'device': 'console',
             'returnMeta': 'true',
@@ -60,7 +62,7 @@ class SymbolDownloader:
             params=query_string
         )
         req = req.prepare()
-        print("req " + req.url)
+        #print("req " + req.url)
         resp = self.rsession.send(req, timeout=(12, 12))
         resp.raise_for_status()
 
@@ -78,6 +80,7 @@ class SymbolDownloader:
     def _nextQuery(self):
         if self._getQueryIndex() + 1 >= len(self.queries):
             self.current_q = self.queries[0]
+            self.nearly_done = True
         else:
             self.current_q = self.queries[self._getQueryIndex() + 1]
 
@@ -116,7 +119,8 @@ class SymbolDownloader:
 
         # There is no pagination with this API.
 				# If we receive 10 results, we assume there are more than 10 and add another layer of queries to narrow the search further
-        if(count == 10):
+                # original test on ==10 but yahoo sometimes stops earlier, so replaced with >7 (tunable)
+        if(7 < count <= 10):
             self._add_queries(self.current_q)
         elif(count > 10):
             # This should never happen with this API, it always returns at most 10 items
@@ -127,7 +131,8 @@ class SymbolDownloader:
                             + "\n"
                             + repr(json))
 
-        if self._getQueryIndex() + 1 >= len(self.queries):
+        #test if queries[0]has been searched before signalling done
+        if (self._getQueryIndex() + 1 >= len(self.queries) and self.nearly_done):
             self.done = True
         else:
             self.done = False

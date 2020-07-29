@@ -43,7 +43,7 @@ def downloadEverything(downloader, tickerType, insecure, sleeptime, pandantic):
             try:
                 print (" " + text(symbols[0]))
                 print (" " + text(symbols[1]))
-                print ("  ect...")
+                print ("  etc...")
             except:
                 print (" Could not display some ticker symbols due to char encoding")
         downloader.printProgress()
