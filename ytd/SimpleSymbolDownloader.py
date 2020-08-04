@@ -8,7 +8,7 @@ from ytd.compat import quote
 
 user_agent = 'yahoo-ticker-symbol-downloader'
 general_search_characters = 'abcdefghijklmnopqrstuvwxyz0123456789.='
-first_search_characters = 'abcdefghijklmnopqrstuvwxyz'
+first_search_characters = 'aabcdefghijklmnopqrstuvwxyz'
 
 class SymbolDownloader:
     """Abstract class"""
@@ -24,7 +24,7 @@ class SymbolDownloader:
         self._add_queries()
         self.current_q = self.queries[0]
         self.done = False
-        self.nearly_done = False
+        #self.nearly_done = False
 
     def _add_queries(self, prefix=''):
         # This method will add (prefix+)a...z to self.queries
@@ -78,11 +78,11 @@ class SymbolDownloader:
         return len(self.queries)
 
     def _nextQuery(self):
-        if self._getQueryIndex() + 1 >= len(self.queries):
-            self.current_q = self.queries[0]
-            self.nearly_done = True
-        else:
-            self.current_q = self.queries[self._getQueryIndex() + 1]
+        #if self._getQueryIndex() + 1 >= len(self.queries):
+        #    self.current_q = self.queries[0]
+        #    self.nearly_done = True
+        #else:
+        self.current_q = self.queries[self._getQueryIndex() + 1]
 
     def nextRequest(self, insecure=False, pandantic=False):
         self._nextQuery()
@@ -132,7 +132,7 @@ class SymbolDownloader:
                             + repr(json))
 
         #test if queries[0]has been searched before signalling done
-        if (self._getQueryIndex() + 1 >= len(self.queries) and self.nearly_done):
+        if self._getQueryIndex() + 1 >= len(self.queries):
             self.done = True
         else:
             self.done = False
