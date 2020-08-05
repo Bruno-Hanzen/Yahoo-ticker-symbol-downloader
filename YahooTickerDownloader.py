@@ -13,7 +13,7 @@ from ytd.compat import robotparser
 
 import tablib
 
-import sys
+#import sys
 
 user_agent = SimpleSymbolDownloader.user_agent
 

@@ -8,7 +8,7 @@ from ytd.compat import quote
 
 user_agent = 'yahoo-ticker-symbol-downloader'
 general_search_characters = 'abcdefghijklmnopqrstuvwxyz0123456789.='
-first_search_characters = 'aabcdefghijklmnopqrstuvwxyz'
+first_search_characters = '_abcdefghijklmnopqrstuvwxyz'
 
 class SymbolDownloader:
     """Abstract class"""
@@ -62,7 +62,7 @@ class SymbolDownloader:
             params=query_string
         )
         req = req.prepare()
-        #print("req " + req.url)
+        print("req " + req.url)
         resp = self.rsession.send(req, timeout=(12, 12))
         resp.raise_for_status()
 
